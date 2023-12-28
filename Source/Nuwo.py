@@ -1,8 +1,9 @@
+import os
 import sys
 import time
-import os
 import pickle
 from pathlib import Path
+
 import colorful as cf
 from pynput import keyboard as kb
 from pynput import mouse as ms
@@ -54,21 +55,17 @@ class Macro:
     def use_settings(self):
         if not any(list(self.settings.values())):
             return
-        mode = []
-        if self.settings["mode"] == Mode.first:
-            mode.append("1st Person")
-        else:
-            mode.append("3rd Person")
-        if self.settings["state"] == State.hold:
-            mode.append("Hold")
-        else:
-            mode.append("Toggle")
-        key = [self.settings["mouse"], self.settings["key"]]
-        out = f"{cf.green('Last Used Settings')}:\n"
-        out += f"Game Mode: {cf.red}{mode[0]}{cf.reset}; {cf.blue}{mode[1]}{cf.reset}\n"
-        out += f"Key: {cf.yellow}{key[1].title()}{cf.reset}; Mouse: {cf.yellow}{key[0]}{cf.reset}\n"
-        out += f'{cf.cyan}Use again? {cf.reset}'
-        return input(out).lower().startswith("y")
+        pov = "1st" if self.settings["mode"] == Mode.first else "3rd"
+        mode = "Hold" if self.settings["state"] == State.hold else "Toggle"
+        key =  self.settings["key"]
+        mouse = self.settings["mouse"]
+        msg = (f"{cf.green}Last Used Settings:\n{cf.reset}"
+               f"Game Mode: {cf.red}{pov} Person{cf.reset}; "
+               f"{cf.blue}{mode}{cf.reset}\n"
+               f"Key: {cf.yellow}{key.title()}{cf.reset}; "
+               f"Mouse: {cf.yellow}{mouse}{cf.reset}\n"
+               f"{cf.cyan}Use settings again? {cf.reset}")
+        return input(msg).lower().startswith("y")
 
     def save_settings(self):
         self.settings['mode'] = self.mode
@@ -125,7 +122,7 @@ class Macro:
         t5 = cf.brightblue('/_/ |_/\____/  |__/|__/\____/     |')
         t1 += state + "\n"
         t3 += cf.magenta("Need or want to support? \n")
-        t5 += cf.orange("Join the discord!: https://discord.gg/j5mVSPTMWy\n")
+        t5 += cf.orange("Join the discord!: https://discord.gg/uqyv8NVWMX\n")
         t6 = cf.yellow("Created by edi\n")
         status = t1 + t2 + t3 + t4 + t5 + t6
         if self.last != status:
@@ -200,12 +197,10 @@ def main():
             macro.get_start_key()
             macro.get_mode()
             macro.save_settings()
-
         macro.show_status()
         macro.start()
         if not macro.change_settings():
             break
-
 
 if __name__ == "__main__":
     main()
